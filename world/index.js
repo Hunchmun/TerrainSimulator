@@ -218,7 +218,6 @@ World.prototype.generateChunk = function(Cx, Cy) {
 
     // Generate image
     this.chunks[Cx][Cy].image = this.renderChunkView(Cx, Cy);
-    console.log("Chunk Render complete: (", Cx, ",", Cy, ")");
 };
 
 World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
@@ -242,12 +241,16 @@ World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
 };
 
 World.prototype.renderWorldView = function(screenPosition, width, height) {
-    const baseChunkReference = this.getChunkReference(screenPosition.x, screenPosition.y);
+
+    // Get screen boundaries
+    const TLChunkReference = this.getChunkReference(screenPosition.x, screenPosition.y);
+    const TRChunkReference = this.getChunkReference(screenPosition.x + width, screenPosition.y);
+    const BLChunkReference = this.getChunkReference(screenPosition.x + width, screenPosition.y + height);
     const chunkList = [];
 
-    // Make list of chunks within the the screen
-    for (let x = baseChunkReference.Cx; x < baseChunkReference.Cx + width / CHUNK_SIZE; x++) {
-        for (let y = baseChunkReference.Cy; y < baseChunkReference.Cy + height / CHUNK_SIZE; y++) {
+    // Make list of chunks within the the screen boundaries
+    for (let x = TLChunkReference.Cx; x < TRChunkReference.Cx; x++) {
+        for (let y = TLChunkReference.Cy; y < BLChunkReference.Cy; y++) {
 
             // Load chunks that are in view and that exist
             if (typeof this.chunks[x] !== "undefined" && typeof this.chunks[x][y] !== "undefined") {
@@ -269,8 +272,8 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
         if (this.chunks[x][y] !== null) {
             this.context.putImageData(
                 this.chunks[x][y].image,
-                (x < 1 ? 0 : x * CHUNK_SIZE) + screenPosition.x,
-                (y < 1 ? 0 : y * CHUNK_SIZE) + screenPosition.y
+                x * CHUNK_SIZE - screenPosition.x,
+                y * CHUNK_SIZE - screenPosition.y
             );
         }
     }
