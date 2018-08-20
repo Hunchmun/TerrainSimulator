@@ -82,7 +82,11 @@ World.prototype.getTemperature = function(chunkReference) {
 };
 
 World.prototype.getBiome = function(e, m, t) {
-
+    /*
+    e: Elevation
+    m: Moisture
+    t: Temperature
+    */
     // Ocean
     if (e < this.waterLevel) {
         if (m + (t * 2) < 0) return ICE;
