@@ -24,9 +24,6 @@ let mousePosition = {
     y: 0
 };
 
-// Seed noise
-noise.seed(Math.random());
-
 // Create world
 const world = new World(canvas.getContext("2d"));
 
@@ -53,9 +50,9 @@ function update(elapsed) {
         world.generateChunk(x, y);
         x++;
     } else if (y < MAP_SIZE) {
-        world.generateChunk(x, y);
-        y++;
         x = 0;
+        y++;
+        world.generateChunk(x, y);
     }
 }
 

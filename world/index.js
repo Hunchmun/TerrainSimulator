@@ -48,6 +48,17 @@ function World(context) {
     this.waterLevel = 0;
     this.snowLevel = 1000;
     this.noiseMultiplier = 255;
+
+    // Populate map
+    for (let x = 0; x < MAP_SIZE * 2; x++) {
+        this.chunks[x] = [];
+        for (let y = 0; y < MAP_SIZE; y++) {
+            this.chunks[x][y] = null;
+        }
+    }
+
+    // View Settings
+    this.forceRenderView = false;
 }
 
 World.prototype.getChunkReference = function(x, y) {
@@ -163,11 +174,6 @@ World.prototype.generateNoiseLayers = function() {
 
 World.prototype.generateChunk = function(Cx, Cy) {
 
-    // Ensure that row/column exist
-    if (typeof this.chunks[Cx] === "undefined") {
-        this.chunks[Cx] = [];
-    }
-
     // Generate Maps
     const xOffset = -Cx; //Determine offset by x/y position
     const yOffset = -Cy; //Determine offset by x/y position
@@ -198,17 +204,7 @@ World.prototype.generateChunk = function(Cx, Cy) {
 
     // Generate image
     this.chunks[Cx][Cy].image = this.renderChunkView(Cx, Cy);
-    console.log("Render complete: (", Cx, ",", Cy, ")");
-};
-
-World.prototype.generateTerrain = function(layers) {
-    const start = new Date();
-    console.log("Render started...");
-    layers = (typeof layers !== "undefined" && layers !== null ? layers : this.settings.layers);
-    this.elevation = this.generateNoiseMap("height", layers);
-    this.world = [];
-    console.log(this.elevation);
-    console.log("Render took:", new Date() - start);
+    console.log("Chunk Render complete: (", Cx, ",", Cy, ")");
 };
 
 World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
@@ -221,6 +217,8 @@ World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
             const uY = y * ZOOM;
             let e = 0;
             for (let i = 0; i < layers.length; i++) {
+
+                // Noise output function
                 e += layers[i][0] * (signal.noise2D(layers[i][1] * (uX / CHUNK_SIZE - xOffset * ZOOM), layers[i][2] * (uY / CHUNK_SIZE - yOffset * ZOOM)));
             }
             map[x][y] = Math.round(((e + 0.5) / 4) * p);
@@ -230,9 +228,36 @@ World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
 };
 
 World.prototype.renderWorldView = function(screenPosition, width, height) {
-    for (let x = 0; x < this.chunks.length; x++) {
-        for (let y = 0; y < this.chunks[x].length; y++) {
-            this.context.putImageData(this.chunks[x][y].image, (x < 1 ? 0 : x * CHUNK_SIZE) + screenPosition.x, (y < 1 ? 0 : y * CHUNK_SIZE) + screenPosition.y);
+    const baseChunkReference = this.getChunkReference(screenPosition.x, screenPosition.y);
+    const chunkList = [];
+
+    // Make list of chunks within the the screen
+    for (let x = baseChunkReference.Cx; x < baseChunkReference.Cx + width / CHUNK_SIZE; x++) {
+        for (let y = baseChunkReference.Cy; y < baseChunkReference.Cy + height / CHUNK_SIZE; y++) {
+
+            // Load chunks that are in view and that exist
+            if (typeof this.chunks[x] !== "undefined" && typeof this.chunks[x][y] !== "undefined") {
+                chunkList.push([x, y]);
+            }
+        }
+    }
+
+    // Draw the chunk images to the screen
+    for (let i = 0; i < chunkList.length; i++) {
+        const x = chunkList[i][0];
+        const y = chunkList[i][1];
+
+        // Render not yet rendered chunks
+        if (this.chunks[x][y] === null && this.forceRenderView) {
+            this.generateChunk(x, y);
+        }
+
+        if (this.chunks[x][y] !== null) {
+            this.context.putImageData(
+                this.chunks[x][y].image,
+                (x < 1 ? 0 : x * CHUNK_SIZE) + screenPosition.x,
+                (y < 1 ? 0 : y * CHUNK_SIZE) + screenPosition.y
+            );
         }
     }
 };
