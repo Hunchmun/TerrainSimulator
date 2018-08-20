@@ -86,7 +86,8 @@ World.prototype.getBiome = function(e, m, t) {
     // Ocean
     if (e < this.waterLevel) {
         if (m + (t * 2) < 0) return ICE;
-        else return OCEAN;
+        else if(e < this.waterLevel - 150) return OCEAN;
+		else return COAST;
     }
 
     // Beach
