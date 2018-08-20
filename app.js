@@ -3,17 +3,6 @@ const canvas = document.getElementById("dashboard");
 let previous = null;
 let fps = 0;
 
-const nodes = [
-    "#00ff00",
-    "#0000ff"
-];
-
-const screenSettings = {
-    height: 900,
-    width: 1600,
-    unitSize: 100,
-};
-
 const mapPosition = {
     x: 0,
     y: 0
@@ -42,6 +31,7 @@ function loop(timestamp) {
 }
 
 let x = 0; let y = 0;
+
 function update(elapsed) {
     fps = 1000 / elapsed;
 
@@ -61,7 +51,7 @@ function draw(evt) {
     // Reset context
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
-    world.renderWorldView(mapPosition, 500, 500);//canvas.width, canvas.height);
+    world.renderWorldView(mapPosition, canvas.width, canvas.height);
 
     context.clearRect(10, 10, 175, 300);
     drawGrid(screenSettings.unitSize, screenSettings.unitSize / 2);
@@ -74,7 +64,6 @@ function draw(evt) {
     const chunkReference = world.getChunkReference(mousePosition.x - mapPosition.x, mousePosition.y - mapPosition.y);
 
     try {
-
         drawText("Chunk X: " + chunkReference.Cx, {x: 20, y: 70}, "#FFFFFF");
         drawText("Chunk Y: " + chunkReference.Cy, {x: 20, y: 80}, "#FFFFFF");
         drawText("Block X: " + chunkReference.x, {x: 20, y: 90}, "#FFFFFF");
@@ -102,7 +91,7 @@ function draw(evt) {
     drawText("Map Offset X: " + mapPosition.x, {x: 20, y: 120}, "#FFFFFF");
     drawText("Map Offset Y: " + mapPosition.y, {x: 20, y: 130}, "#FFFFFF");
 
-    drawText("Chunks Rendered: " + (world.renderedChunks === world.totalChunks ? "Complete!" : world.renderedChunks + "/" + world.totalChunks), {x: 20, y: 210}, "#FFFFFF")
+    drawText("Chunks Rendered: " + (world.renderedChunks + "/" + world.totalChunks), {x: 20, y: 210}, "#FFFFFF")
 
     drawText("=DEBUG=", {x: 20, y: 240}, "#FF0000");
 

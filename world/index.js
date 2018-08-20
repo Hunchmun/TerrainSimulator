@@ -213,7 +213,6 @@ World.prototype.generateChunk = function(Cx, Cy) {
 
     // Generate image
     this.chunks[Cx][Cy].image = this.renderChunkView(Cx, Cy);
-    console.log("Chunk Render complete: (", Cx, ",", Cy, ")");
 };
 
 World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
@@ -268,8 +267,8 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
         if (this.chunks[x][y] !== null) {
             this.context.putImageData(
                 this.chunks[x][y].image,
-                (x < 1 ? 0 : x * CHUNK_SIZE) + screenPosition.x,
-                (y < 1 ? 0 : y * CHUNK_SIZE) + screenPosition.y
+                x * CHUNK_SIZE - screenPosition.x,
+                y * CHUNK_SIZE - screenPosition.y
             );
         }
     }
