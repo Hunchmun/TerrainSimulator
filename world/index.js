@@ -9,6 +9,10 @@ function World(context) {
     this.height = MAP_SIZE * CHUNK_SIZE;
     this.context = context;
 
+    // Chunks
+    this.totalChunks = 2 * (MAP_SIZE * MAP_SIZE);
+    this.renderedChunks = 0;
+
     // Maps
     this.elevation = [];
     this.chunks = [];
@@ -173,6 +177,11 @@ World.prototype.generateNoiseLayers = function() {
 };
 
 World.prototype.generateChunk = function(Cx, Cy) {
+
+    // Update chunk count
+    if (this.chunks[x][y] === null) {
+        this.renderedChunks++;
+    }
 
     // Generate Maps
     const xOffset = -Cx; //Determine offset by x/y position

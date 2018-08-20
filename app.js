@@ -63,7 +63,7 @@ function draw(evt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     world.renderWorldView(mapPosition, canvas.width, canvas.height);
 
-    context.clearRect(10, 10, 175, 160);
+    context.clearRect(10, 10, 175, 200);
     drawGrid(screenSettings.unitSize, screenSettings.unitSize / 2);
 
     drawText("FPS: " + Math.round(fps), {x: 20, y: 30}, "#FFFFFF");
@@ -91,9 +91,12 @@ function draw(evt) {
         drawText("Biome: " + biome + " (" + tiles[biome].name + ")", {x: 20, y: 140}, "#FFFFFF");
         drawText("Latitude: " + latitude, {x: 20, y: 150}, "#FFFFFF");
         drawText("Temperature: " + temperature, {x: 20, y: 160}, "#FFFFFF");
+
     } catch (e) {
         console.error(e);
     }
+
+    drawText("Chunks Rendered: " + (world.renderedChunks === world.totalChunks ? "Complete!" : world.renderedChunks + "/" + world.totalChunks), {x: 20, y: 180}, "#FFFFFF")
 }
 
 function keypress(e) {
