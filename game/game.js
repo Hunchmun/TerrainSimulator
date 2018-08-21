@@ -116,6 +116,9 @@ Game.prototype.input = function(type, evt) {
         case "mouseup": {
             this.mousePressed = false;
         } break;
+        case "mouseout": {
+            this.mousePressed = false;
+        }  break;
         case "keypress": {
             let code = evt.keyCode;
             switch (code) {
