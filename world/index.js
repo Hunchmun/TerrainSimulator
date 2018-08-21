@@ -12,6 +12,7 @@ function World(context) {
     // Chunks
     this.totalChunks = 2 * (MAP_SIZE * MAP_SIZE);
     this.renderedChunks = 0;
+    this.chunksDrawn = 0;
 
     // Maps
     this.elevation = [];
@@ -63,6 +64,7 @@ function World(context) {
 
     // View Settings
     this.forceRenderView = false;
+    this.overDraw = true;
 }
 
 World.prototype.getChunkReference = function(x, y) {
@@ -248,9 +250,9 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
     const BLChunkReference = this.getChunkReference(screenPosition.x + width, screenPosition.y + height);
     const chunkList = [];
 
-    // Make list of chunks within the the screen boundaries
-    for (let x = TLChunkReference.Cx; x < TRChunkReference.Cx; x++) {
-        for (let y = TLChunkReference.Cy; y < BLChunkReference.Cy; y++) {
+    // Make list of chunks within the screen boundaries
+    for (let x = TLChunkReference.Cx; x < TRChunkReference.Cx + (this.overDraw ? 1 : 0); x++) {
+        for (let y = TLChunkReference.Cy; y < BLChunkReference.Cy + (this.overDraw ? 1 : 0); y++) {
 
             // Load chunks that are in view and that exist
             if (typeof this.chunks[x] !== "undefined" && typeof this.chunks[x][y] !== "undefined") {
@@ -260,6 +262,7 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
     }
 
     // Draw the chunk images to the screen
+    this.chunksDrawn = 0;
     for (let i = 0; i < chunkList.length; i++) {
         const x = chunkList[i][0];
         const y = chunkList[i][1];
@@ -270,6 +273,7 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
         }
 
         if (this.chunks[x][y] !== null) {
+            this.chunksDrawn++;
             this.context.putImageData(
                 this.chunks[x][y].image,
                 x * CHUNK_SIZE - screenPosition.x,

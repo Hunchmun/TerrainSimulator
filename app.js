@@ -60,7 +60,7 @@ function draw(evt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     world.renderWorldView(mapPosition, canvas.width, canvas.height);
 
-    context.clearRect(10, 10, 175, 300);
+    context.clearRect(10, 10, 175, 320);
     drawGrid(CHUNK_SIZE, CHUNK_SIZE / 2);
 
     drawText("FPS: " + Math.round(fps), {x: 20, y: 30}, "#FFFFFF");
@@ -110,6 +110,8 @@ function draw(evt) {
     drawText("Map Position Top Left: " + TRChunkReference.Cx + ", " + TRChunkReference.Cy, {x: 20, y: 270}, "#FF0000");
     drawText("Map Position Top Left: " + BLChunkReference.Cx + ", " + BLChunkReference.Cy, {x: 20, y: 280}, "#FF0000");
     drawText("Map Position Top Left: " + BRChunkReference.Cx + ", " + BRChunkReference.Cy, {x: 20, y: 290}, "#FF0000");
+
+    drawText("Chunks Drawn: " + world.chunksDrawn, {x: 20, y: 310}, "#FF0000");
 
 
 }
