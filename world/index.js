@@ -138,13 +138,13 @@ World.prototype.getBiome = function(e, m, t) {
         return BEACH;
     }
 
-    if (t < -5) return SNOW;
+    if (t < 0) return SNOW;
 
     // Low Elevation Ground
     if (e < 750) {
 
         // Low Temperature
-        if (t < 0) {
+        if (t < 5) {
             if (m < 100) return TUNDRA;
             return TAIGA;
         } else if (t < 20) {
@@ -162,7 +162,7 @@ World.prototype.getBiome = function(e, m, t) {
     if (e < 1500) {
 
         // Low Temperature
-        if (t < 0) {
+        if (t < 5) {
             if (m < 100) return TUNDRA;
             return TAIGA;
         } else if (t < 15) {
