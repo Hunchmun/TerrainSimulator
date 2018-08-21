@@ -60,7 +60,7 @@ function World(context) {
             name: "moisture",
             seed: "water",
             signal: new SimplexNoise("water"),
-            layers: this.generateNoiseLayers()
+            layers: this.generateNoiseLayersFibonacci()
         }
     ];
 
@@ -126,7 +126,7 @@ World.prototype.getBiome = function(e, m, t) {
 
     // Ocean
     if (e < this.waterLevel) {
-        if (m + (t * 5) < 0) return ICE;
+        if (m + (t * this.iceMultiplier) < 0) return ICE;
         else if (e < this.waterLevel - 150) return OCEAN;
 		else return COAST;
     }
