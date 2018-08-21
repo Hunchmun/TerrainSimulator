@@ -31,7 +31,8 @@ const events = {
         "mousedown",
         "mouseup",
         "mousemove",
-        "keydown"
+        "keydown",
+        "mouseout"
     ]
 };
 

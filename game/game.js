@@ -58,11 +58,11 @@ Game.prototype.draw = function() {
     context.clearRect(10, 10, 175, 300);
     this.drawGrid(CHUNK_SIZE, CHUNK_SIZE / 2);
 
-    this.drawText("Mouse X: " + this.mousePosition.x, {x: 20, y: 40}, "#FFFFFF");
-    this.drawText("Mouse Y: " + this.mousePosition.y, {x: 20, y: 50}, "#FFFFFF");
+    this.drawText("Mouse X: " + Math.floor(this.mousePosition.x), {x: 20, y: 40}, "#FFFFFF");
+    this.drawText("Mouse Y: " + Math.floor(this.mousePosition.y), {x: 20, y: 50}, "#FFFFFF");
 
     // Elevation Inspector
-    const chunkReference = this.world.getChunkReference(this.mousePosition.x + this.mapPosition.x, this.mousePosition.y + this.mapPosition.y);
+    const chunkReference = this.world.getChunkReference((Math.floor(this.mousePosition.x) + this.mapPosition.x), (Math.floor(this.mousePosition.y) + this.mapPosition.y));
 
     try {
         this.drawText("Chunk X: " + chunkReference.Cx, {x: 20, y: 70}, "#FFFFFF");
@@ -116,6 +116,9 @@ Game.prototype.input = function(type, evt) {
         case "mouseup": {
             this.mousePressed = false;
         } break;
+        case "mouseout": {
+            this.mousePressed = false;
+        }  break;
         case "keypress": {
             let code = evt.keyCode;
             switch (code) {
