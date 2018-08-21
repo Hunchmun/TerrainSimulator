@@ -149,7 +149,7 @@ World.prototype.getBiome = function(e, m, t) {
             return TAIGA;
         } else if (t < 20) {
             if (m < 0) return SHRUBLAND;
-            if (m < 150) return GRASSLAND;
+            if (m < 100) return GRASSLAND;
             return SWAMP;
         } else if (t < 35) {
             if (m < 0) return DESERT;
@@ -163,10 +163,10 @@ World.prototype.getBiome = function(e, m, t) {
 
         // Low Temperature
         if (t < 5) {
-            if (m < 100) return TUNDRA;
-            return TAIGA;
+            if (m < 0) return ROCKY;
+            return TUNDRA;
         } else if (t < 15) {
-            if (m < 0) return SHRUBLAND;
+            if (m < 0) return TUNDRA;
             if (m < 50) return GRASSLAND;
             return FOREST;
         } else if (t < 35) {
