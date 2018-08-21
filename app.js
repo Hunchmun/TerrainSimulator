@@ -8,7 +8,14 @@ const mapPosition = {
     y: 0
 };
 
+let mousePressed = false;
+
 let mousePosition = {
+    x: 0,
+    y: 0
+};
+
+let lastMouseClickPosition = {
     x: 0,
     y: 0
 };
@@ -134,8 +141,24 @@ function getMousePos(canvas, evt) {
     };
 }
 
+function mouseDrag (){
+        if(mousePressed) {
+            mapPosition.x -= (mousePosition.x - lastMouseClickPosition.x)
+            mapPosition.y -= (mousePosition.y - lastMouseClickPosition.y)
+        }
+        lastMouseClickPosition = mousePosition;
+}
 canvas.addEventListener('mousemove', function(evt) {
     mousePosition = getMousePos(canvas, evt);
+    mouseDrag();
+}, false);
+
+canvas.addEventListener('mousedown', function(evt){
+    mousePressed = true;
+},false);
+
+canvas.addEventListener('mouseup', function(evt){
+    mousePressed = false;
 }, false);
 
 window.addEventListener('keydown', keypress, false);
