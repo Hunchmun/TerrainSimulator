@@ -60,7 +60,7 @@ function draw(evt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     world.renderWorldView(mapPosition, canvas.width, canvas.height);
 
-    context.clearRect(10, 10, 175, 320);
+    context.clearRect(10, 10, 175, 250);
     drawGrid(CHUNK_SIZE, CHUNK_SIZE / 2);
 
     drawText("FPS: " + Math.round(fps), {x: 20, y: 30}, "#FFFFFF");
@@ -88,32 +88,14 @@ function draw(evt) {
         drawText("Latitude: " + latitude, {x: 20, y: 180}, "#FFFFFF");
         drawText("Temperature: " + temperature, {x: 20, y: 190}, "#FFFFFF");
 
-        // Debug
-
     } catch (e) {
         console.error(e);
     }
 
-
     drawText("Map Offset X: " + mapPosition.x, {x: 20, y: 120}, "#FFFFFF");
     drawText("Map Offset Y: " + mapPosition.y, {x: 20, y: 130}, "#FFFFFF");
-
-    drawText("Chunks Rendered: " + (world.renderedChunks + "/" + world.totalChunks), {x: 20, y: 210}, "#FFFFFF")
-
-    drawText("=DEBUG=", {x: 20, y: 240}, "#FF0000");
-
-    const TLChunkReference = world.getChunkReference(mapPosition.x, mapPosition.y);
-    const TRChunkReference = world.getChunkReference(mapPosition.x + canvas.width, mapPosition.y);
-    const BLChunkReference = world.getChunkReference(mapPosition.x + canvas.width, mapPosition.y + canvas.height);
-    const BRChunkReference = world.getChunkReference(mapPosition.x, mapPosition.y + canvas.height);
-    drawText("Map Position Top Left: " + TLChunkReference.Cx + ", " + TLChunkReference.Cy, {x: 20, y: 260}, "#FF0000");
-    drawText("Map Position Top Left: " + TRChunkReference.Cx + ", " + TRChunkReference.Cy, {x: 20, y: 270}, "#FF0000");
-    drawText("Map Position Top Left: " + BLChunkReference.Cx + ", " + BLChunkReference.Cy, {x: 20, y: 280}, "#FF0000");
-    drawText("Map Position Top Left: " + BRChunkReference.Cx + ", " + BRChunkReference.Cy, {x: 20, y: 290}, "#FF0000");
-
-    drawText("Chunks Drawn: " + world.chunksDrawn, {x: 20, y: 310}, "#FF0000");
-
-
+    drawText("Chunks Rendered: " + (world.renderedChunks + "/" + world.totalChunks), {x: 20, y: 210}, "#FFFFFF");
+    drawText("Chunks Drawn: " + world.chunksDrawn, {x: 20, y: 220}, "#FFFFFF");
 }
 
 function keypress(e) {
