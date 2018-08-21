@@ -46,10 +46,12 @@ function update(elapsed) {
     if (x < MAP_SIZE * 2) {
         world.generateChunk(x, y);
         x++;
-    } else if (y < MAP_SIZE) {
+        console.log(x, y);
+    } else if (y < MAP_SIZE - 1) {
         x = 0;
         y++;
         world.generateChunk(x, y);
+        console.log(x, y);
     }
 }
 
