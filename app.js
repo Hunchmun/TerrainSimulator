@@ -68,7 +68,7 @@ function draw(evt) {
     drawText("Mouse Y: " + mousePosition.y, {x: 20, y: 50}, "#FFFFFF");
 
     // Elevation Inspector
-    const chunkReference = world.getChunkReference(mousePosition.x - mapPosition.x, mousePosition.y - mapPosition.y);
+    const chunkReference = world.getChunkReference(mousePosition.x + mapPosition.x, mousePosition.y + mapPosition.y);
 
     try {
         drawText("Chunk X: " + chunkReference.Cx, {x: 20, y: 70}, "#FFFFFF");
