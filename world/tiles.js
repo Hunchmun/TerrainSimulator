@@ -17,48 +17,78 @@ const HIGHLAND = 14;
 const tiles = [
     {
         "name": "Ice",
-        "colour": [240,255,255]
+        "colour": [240,255,255],
+        "travel": 0.3,
+        "sailing": 0
     }, {
         "name": "Ocean",
-        "colour": [30,144,255]
+        "colour": [30,144,255],
+        "travel": 0,
+        "sailing": 1
     }, {
         "name": "Beach",
-        "colour": [255,250,205]
+        "colour": [255,250,205],
+        "travel": 0.8,
+        "sailing": 0
     }, {
         "name": "Rocky",
-        "colour": [112,128,144]
+        "colour": [112,128,144],
+        "travel": 0.2,
+        "sailing": 0
     }, {
         "name": "Tundra",
-        "colour": [128,128,0]
+        "colour": [128,128,0],
+        "travel": 0.6,
+        "sailing": 0
     }, {
         "name": "Snow",
-        "colour": [255,250,250]
+        "colour": [255,250,250],
+        "travel": 0.2,
+        "sailing": 0
     }, {
         "name": "Swamp",
-        "colour": [128,128,0]
+        "colour": [128,128,0],
+        "travel": 0.1,
+        "sailing": 0
     }, {
         "name": "Shrubland",
-        "colour": [189,183,107]
+        "colour": [189,183,107],
+        "travel": 0.6,
+        "sailing": 0
     }, {
         "name": "Taiga",
-        "colour": [85,107,47]
+        "colour": [85,107,47],
+        "travel": 0.5,
+        "sailing": 0
     }, {
         "name": "Grassland",
-        "colour": [50,205,50]
+        "colour": [50,205,50],
+        "travel": 0.7,
+        "sailing": 0
     }, {
         "name": "Desert",
-        "colour": [255,228,181]
+        "colour": [255,228,181],
+        "travel": 0.6,
+        "sailing": 0
     }, {
         "name": "Forest",
-        "colour": [0,100,0]
+        "colour": [0,100,0],
+        "travel": 0.2,
+        "sailing": 0
     }, {
         "name": "Jungle",
-        "colour": [85,107,47]
+        "colour": [85,107,47],
+        "travel": 0.2,
+        "sailing": 0
     },{
         "name": "Coast",
-        "colour": [143,200,255]
+        "colour": [143,200,255],
+        "travel": 0.01,
+        "sailing": 0.5
 	}, {
         "name": "Highland",
-        "colour": [82, 147, 0]
+        "colour": [82, 147, 0],
+        "travel": 0.4,
+        "sailing": 0
     }
 ];

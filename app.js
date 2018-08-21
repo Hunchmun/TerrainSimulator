@@ -95,6 +95,12 @@ function draw(evt) {
         const biome = world.getBiomeValue(chunkReference);
         drawText("Biome: " + biome + " (" + tiles[biome].name + ")", {x: 20, y: 190}, "#FFFFFF");
 
+        const travelValue = world.getTravelValue(chunkReference);
+        drawText("Travel Value: " + travelValue, {x: 20, y: 200}, "#FFFFFF");
+
+        const sailingValue = world.getSailingValue(chunkReference);
+        drawText("Sailing Value: " + sailingValue, {x: 20, y: 210}, "#FFFFFF");
+
     } catch (e) {
         console.error(e);
     }
