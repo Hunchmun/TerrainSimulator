@@ -54,7 +54,7 @@ function draw(evt) {
     world.renderWorldView(mapPosition, canvas.width, canvas.height);
 
     context.clearRect(10, 10, 175, 300);
-    drawGrid(screenSettings.unitSize, screenSettings.unitSize / 2);
+    drawGrid(CHUNK_SIZE, CHUNK_SIZE / 2);
 
     drawText("FPS: " + Math.round(fps), {x: 20, y: 30}, "#FFFFFF");
     drawText("Mouse X: " + mousePosition.x, {x: 20, y: 40}, "#FFFFFF");

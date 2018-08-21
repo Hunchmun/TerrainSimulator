@@ -54,7 +54,7 @@ const tiles = [
         "name": "Jungle",
         "colour": [85,107,47]
     },{
-		    "name": "Coast",
-		    "colour": [143,200,255]
+        "name": "Coast",
+        "colour": [143,200,255]
 	}
 ];

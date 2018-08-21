@@ -1,6 +1,6 @@
-const ZOOM = 2;
-const CHUNK_SIZE = 50;
-const MAP_SIZE = 18;
+const ZOOM = 4;
+const CHUNK_SIZE = 100;
+const MAP_SIZE = 9;
 
 function World(context) {
 
