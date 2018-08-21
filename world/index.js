@@ -44,7 +44,7 @@ function World(context) {
 
     // Temperature calculation
     this.baseTemperature = 50; //Temperature at equator
-    this.temperatureMultiplier = 200; // (Higher is colder)
+    this.temperatureMultiplier = 125; // (Higher is colder)
     this.temperaturHeightLossDistance = 50; // Elevation units for temperature loss
     this.temperaturHeightLossTemperature = 2; //Amount of temperature lost per elevation unit
 
@@ -104,13 +104,13 @@ World.prototype.getBiome = function(e, m, t) {
     if (t < -5) return SNOW;
 
     // Low Elevation Ground
-    if (e < 30) {
+    if (e < 170) {
 
         // Low Temperature
         if (t < 0) {
             if (m < 100) return TUNDRA;
             return TAIGA;
-        } else if (t < 15) {
+        } else if (t < 20) {
             if (m < 0) return SHRUBLAND;
             if (m < 50) return GRASSLAND;
             return SWAMP;

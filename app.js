@@ -111,10 +111,10 @@ function keypress(e) {
     let code = e.keyCode;
     switch (code) {
         //case 27: throw new Error("Game terminated by user"); break//Escape
-        case 37: mapPosition.x += 50; break; //Left key
-        case 38: mapPosition.y += 50; break; //Up key
-        case 39: mapPosition.x -= 50; break; //Right key
-        case 40: mapPosition.y -= 50; break; //Down key
+        case 37: mapPosition.x -= 50; break; //Left key
+        case 38: mapPosition.y -= 50; break; //Up key
+        case 39: mapPosition.x += 50; break; //Right key
+        case 40: mapPosition.y += 50; break; //Down key
         //default: alert(code); //Everything else
     }
 }
