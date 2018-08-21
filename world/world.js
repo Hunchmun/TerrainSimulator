@@ -342,6 +342,30 @@ World.prototype.renderChunkView = function(Cx, Cy) {
     return image;
 };
 
+/**
+ * Returns ID of the given tile chunk reference
+ * @param chunkReference
+ * @returns {number}
+ */
+World.prototype.getTileId = function(chunkReference) {
+    const coord = this.getGlobalPosition(chunkReference);
+    return  (1 + ( coord[1] * CHUNK_SIZE + coord[0]));
+};
+
+/**
+ * Returns global tile position coordinate from chunk reference
+ * @param chunkReference
+ * @returns {[*,*]}
+ */
+World.prototype.getTilePosition = function(chunkReference) {
+    return [chunkReference.Cx * CHUNK_SIZE + chunkReference.x, chunkReference.Cy * CHUNK_SIZE + chunkReference.y];
+};
+
+/**
+ * A Star implementation of a route between two tiles
+ * @param CRStart
+ * @param CREnd
+ */
 World.prototype.routeTo = function(CRStart, CREnd) {
 
 };
