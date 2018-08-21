@@ -1,28 +1,3 @@
-/**
- * Controls the amplitude of generation. Smaller is to zoom in
- * Small = 4
- * Medium = 2
- * Large = 0.5
- * @type {number}
- */
-const ZOOM = 4;
-
-/**
- * Controls the number of tiles/pixels per chunk
- * Optimal = 100
- * @type {number}
- */
-const CHUNK_SIZE = 100;
-
-/**
- * Size of the map, height in chunks (Width is 2x map size)
- * Small = 9
- * Medium = 36
- * Large = 128
- * @type {number}
- */
-const MAP_SIZE = 9;
-
 function World(context) {
 
     // Settings
