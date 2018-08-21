@@ -1,5 +1,26 @@
+/**
+ * Controls the amplitude of generation. Smaller is to zoom in
+ * Small = 4
+ * Medium = 2
+ * Large = 0.5
+ * @type {number}
+ */
 const ZOOM = 4;
+
+/**
+ * Controls the number of tiles/pixels per chunk
+ * Optimal = 100
+ * @type {number}
+ */
 const CHUNK_SIZE = 100;
+
+/**
+ * Size of the map, height in chunks (Width is 2x map size)
+ * Small = 9
+ * Medium = 36
+ * Large = 128
+ * @type {number}
+ */
 const MAP_SIZE = 9;
 
 function World(context) {
@@ -67,6 +88,12 @@ function World(context) {
     this.overDraw = true;
 }
 
+/**
+ * Get the chunk reference for any given tile
+ * @param x - X Co-ordinate
+ * @param y - Y Co-ordinate
+ * @returns {{Cx: number, Cy: number, x: number, y: number}}
+ */
 World.prototype.getChunkReference = function(x, y) {
     return {
         Cx: Math.floor((x) / CHUNK_SIZE), // Chunk X
@@ -76,6 +103,11 @@ World.prototype.getChunkReference = function(x, y) {
     }
 };
 
+/**
+ * Get temperature of the chunk reference
+ * @param chunkReference
+ * @returns {number}
+ */
 World.prototype.getTemperature = function(chunkReference) {
     const elevation = this.getElevation(chunkReference);
     const latitude = this.getLatitude(chunkReference);
@@ -83,12 +115,14 @@ World.prototype.getTemperature = function(chunkReference) {
         / this.temperaturHeightLossDistance) * this.temperaturHeightLossTemperature) + this.baseTemperature);
 };
 
+/**
+ * Function to generate the biome value based on elevation, moisture and temperature
+ * @param {Number} e - Elevation
+ * @param {Number} m - Moisture
+ * @param {Number} t - Temperature
+ */
 World.prototype.getBiome = function(e, m, t) {
-    /*
-    e: Elevation
-    m: Moisture
-    t: Temperature
-    */
+
     // Ocean
     if (e < this.waterLevel) {
         if (m + (t * 2) < 0) return ICE;
@@ -146,18 +180,37 @@ World.prototype.getBiome = function(e, m, t) {
     return ROCKY;
 };
 
+/**
+ * Get the generated value for any given tile
+ * @param chunkReference
+ */
 World.prototype.getTileValue = function(chunkReference) {
     return tiles[this.chunks[chunkReference.Cx][chunkReference.Cy].maps["biomes"][chunkReference.x][chunkReference.y]];
 };
 
+/**
+ * Get the moisture value for a specific chunk reference
+ * @param chunkReference
+ * @returns {*}
+ */
 World.prototype.getMoisture = function(chunkReference) {
     return this.chunks[chunkReference.Cx][chunkReference.Cy].maps["moisture"][chunkReference.x][chunkReference.y];
 };
 
+/**
+ * Get the latitude value for a specific chunk reference
+ * @param chunkReference
+ * @returns {number}
+ */
 World.prototype.getLatitude = function(chunkReference) {
     return Math.abs(((MAP_SIZE * CHUNK_SIZE) / 2) - (chunkReference.Cy * CHUNK_SIZE + chunkReference.y));
 };
 
+/**
+ * Get the elevation value for a specific chunk reference
+ * @param chunkReference
+ * @returns {*}
+ */
 World.prototype.getElevation = function(chunkReference) {
     return this.chunks[chunkReference.Cx][chunkReference.Cy].maps["elevation"][chunkReference.x][chunkReference.y];
 };
@@ -183,6 +236,11 @@ World.prototype.generateNoiseLayers = function() {
     return layers;
 };
 
+/**
+ * Generate a new chunk from noise maps
+ * @param Cx
+ * @param Cy
+ */
 World.prototype.generateChunk = function(Cx, Cy) {
 
     // Update chunk count
@@ -222,6 +280,14 @@ World.prototype.generateChunk = function(Cx, Cy) {
     this.chunks[Cx][Cy].image = this.renderChunkView(Cx, Cy);
 };
 
+/**
+ * Generate a noise map for a given chunk
+ * @param signal
+ * @param layers
+ * @param xOffset
+ * @param yOffset
+ * @returns {Array}
+ */
 World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
     const map = [];
     const p = this.noiseMultiplier; // Output power
@@ -242,6 +308,12 @@ World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
     return map;
 };
 
+/**
+ * Render visible chunks to canvas
+ * @param screenPosition
+ * @param width
+ * @param height
+ */
 World.prototype.renderWorldView = function(screenPosition, width, height) {
 
     // Get screen boundaries
@@ -283,7 +355,12 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
     }
 };
 
-// Export image of the map view to be drawn in canvas
+/**
+ * Render view of specified chunk
+ * @param Cx
+ * @param Cy
+ * @returns {ImageData}
+ */
 World.prototype.renderChunkView = function(Cx, Cy) {
     const image = this.context.createImageData(CHUNK_SIZE, CHUNK_SIZE);
     const data = image.data;
