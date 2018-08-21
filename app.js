@@ -12,7 +12,7 @@ const ZOOM = 4;
  * Optimal = 100
  * @type {number}
  */
-const CHUNK_SIZE = 100;
+const CHUNK_SIZE = 50;
 
 /**
  * Size of the map, height in chunks (Width is 2x map size)

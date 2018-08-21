@@ -18,7 +18,7 @@ function World(context) {
         {
             name: "elevation",
             seed: "height",
-            signal: new SimplexNoise(/*"height"*/),
+            signal: new SimplexNoise("height"),
             layers: [
                 [12, 0.0625, 0.0625],
                 [10, 0.125, 0.125],
@@ -348,7 +348,7 @@ World.prototype.renderChunkView = function(Cx, Cy) {
  * @returns {number}
  */
 World.prototype.getTileId = function(chunkReference) {
-    const coord = this.getGlobalPosition(chunkReference);
+    const coord = this.getTilePosition(chunkReference);
     return  (1 + ( coord[1] * CHUNK_SIZE + coord[0]));
 };
 
@@ -368,6 +368,140 @@ World.prototype.getTilePosition = function(chunkReference) {
  */
 World.prototype.routeTo = function(CRStart, CREnd) {
 
+    let counter = 0;
+
+    function euclideanDistance(Point, Goal) {
+        // diagonals are considered a little farther than cardinal directions
+        // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
+        // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
+        return Math.sqrt(Math.pow(Point[0] - Goal[0], 2) + Math.pow(Point[1] - Goal[1], 2));
+    }
+
+    function getNeighbours(self, node) {
+        const normalCost = 1;
+        const diagonalCost = 1.4;
+        const arr = [];
+        for (let x = node.co[0]; x < node.co[0] + 3; x++) {
+            for (let y = node.co[1]; y < node.co[1] + 3; y++) {
+
+                // If Valid
+                if (x >= 0 && y >= 0) {
+
+                    // And not self
+                    if (x !== node.co[0] || y !== node.co[1]) {
+
+                        // If traversable
+                        const neighbour = formatNode(self, self.getChunkReference(x, y));
+                        const biome = self.getBiomeValue(neighbour.cr);
+                        const tile = tiles[biome];
+                        if (tile.travel > 0) {
+
+                            // If Diagonal
+                            if (x !== node.co[0] && y !== node.co[1]) {
+                                neighbour.g = node.g + diagonalCost;
+                            } else {
+                                neighbour.g = node.g + normalCost;
+                            }
+
+                            // Save history
+                            neighbour.parent = node;
+                            arr.push(neighbour);
+                        }
+                    }
+                }
+            }
+        } return arr;
+    }
+
+    function constructPath(node) {
+        const path = [ node ];
+        while (node.parent) {
+            node = node.parent;
+            path.push(node);
+        }
+        return path
+    }
+
+    function formatNode(self, chunkReference) {
+        return {
+            cr: chunkReference,                             // Chunk Reference
+            co: self.getTilePosition(chunkReference),       // Global Co-ordinates [x, y]
+            id: self.getTileId(chunkReference),             // Tile ID
+            f: null,
+            g: null,
+            h: null
+        }
+    }
+
+    function nodeInList(list, node) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id === node.id) return i;
+        } return -1;
+    }
+
+    const open = [];
+    const closed = [];
+
+    const start = formatNode(this, CRStart);
+    const end = formatNode(this, CREnd);
+
+    start.g = 0;
+    start.f = start.g + euclideanDistance(start.co, end.co);
+    console.log("Start F Score:", start.f);
+
+    open.push(start);
+
+    while (open.length > 0) {
+
+        counter++;
+
+        if (counter > CHUNK_SIZE * MAP_SIZE) {
+            throw new Error("Infinite Loop: A* Path Finder");
+        } else {
+
+            // Find lowest F
+            let current = null, i;
+            for (i = 0; i < open.length; i++) {
+                if (open.hasOwnProperty(i)) {
+                    if (current === null || current.f > open[i].f) {
+                        current = open[i];
+                    }
+                }
+            }
+
+            // We've arrived?
+            if (current.id === end.id) return constructPath(current);
+            console.log("Current node:", current.co[0], current.co[1]);
+
+            // Remove current node from open list
+            open.splice(i, 1);
+
+            // Add current to closed list
+            closed.push(current);
+
+            // Calculate neighbours
+            const neighbours = getNeighbours(this, current);
+            for (i = 0; i < neighbours.length; i++) {
+
+                // Neighbour NOT in closed list
+                if (nodeInList(closed, neighbours[i]) === -1) {
+                    neighbours[i].f = neighbours[i].g + euclideanDistance(neighbours[i].co, end.co);
+
+                    // Neighbour NOT in open list
+                    if (nodeInList(open, neighbours[i]) === -1) {
+                        open.push(neighbours[i]);
+                    } else {
+                        const openNeighbor = neighbours[i];
+                        if (neighbours[i].g < openNeighbor.g) {
+                            openNeighbor.g = neighbours[i].g;
+                            openNeighbor.parent = neighbours[i].parent;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 };
 
 World.prototype.getTravelValue = function(chunkReference) {
