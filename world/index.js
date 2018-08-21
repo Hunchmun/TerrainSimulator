@@ -66,14 +66,15 @@ function World(context) {
 
     // Temperature calculation
     this.baseTemperature = 50; //Temperature at equator
-    this.temperatureMultiplier = 125; // (Higher is colder)
-    this.temperaturHeightLossDistance = 50; // Elevation units for temperature loss
+    this.temperatureMultiplier = 150; // (Higher is colder)
+    this.temperaturHeightLossDistance = 100; // Elevation units for temperature loss
     this.temperaturHeightLossTemperature = 2; //Amount of temperature lost per elevation unit
 
     // Terrain Settings
     this.waterLevel = 0;
     this.snowLevel = 1000;
-    this.noiseMultiplier = 255;
+    this.noiseMultiplier = 400;
+    this.iceMultiplier = 4; //(Lower is more)
 
     // Populate map
     for (let x = 0; x < MAP_SIZE * 2; x++) {
@@ -125,8 +126,8 @@ World.prototype.getBiome = function(e, m, t) {
 
     // Ocean
     if (e < this.waterLevel) {
-        if (m + (t * 2) < 0) return ICE;
-        else if(e < this.waterLevel - 150) return OCEAN;
+        if (m + (t * 5) < 0) return ICE;
+        else if (e < this.waterLevel - 150) return OCEAN;
 		else return COAST;
     }
 
@@ -140,7 +141,7 @@ World.prototype.getBiome = function(e, m, t) {
     if (t < -5) return SNOW;
 
     // Low Elevation Ground
-    if (e < 170) {
+    if (e < 750) {
 
         // Low Temperature
         if (t < 0) {
@@ -148,7 +149,7 @@ World.prototype.getBiome = function(e, m, t) {
             return TAIGA;
         } else if (t < 20) {
             if (m < 0) return SHRUBLAND;
-            if (m < 50) return GRASSLAND;
+            if (m < 150) return GRASSLAND;
             return SWAMP;
         } else if (t < 35) {
             if (m < 0) return DESERT;
@@ -158,10 +159,10 @@ World.prototype.getBiome = function(e, m, t) {
     }
 
     // Moderate Elevation
-    if (e < 750) {
+    if (e < 1500) {
 
         // Low Temperature
-        if (t < 5) {
+        if (t < 0) {
             if (m < 100) return TUNDRA;
             return TAIGA;
         } else if (t < 15) {
@@ -169,9 +170,8 @@ World.prototype.getBiome = function(e, m, t) {
             if (m < 50) return GRASSLAND;
             return FOREST;
         } else if (t < 35) {
-            if (m < 0) return DESERT;
-            if (m < 100) return GRASSLAND;
-            return JUNGLE;
+            if (m < 50) return DESERT;
+            if (m < 100) return HIGHLAND;
         } else return DESERT;
     }
 
@@ -219,7 +219,7 @@ World.prototype.getElevation = function(chunkReference) {
  * Fibonacci layered noise generator
  * @returns {Array}
  */
-World.prototype.generateNoiseLayers = function() {
+World.prototype.generateNoiseLayersFibonacci = function() {
     const detail = 16;
     const layers = [];
     //layers[0] = [2, 0.5, 0.5];

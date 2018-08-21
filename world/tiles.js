@@ -12,6 +12,7 @@ const DESERT= 10;
 const FOREST = 11;
 const JUNGLE = 12;
 const COAST = 13;
+const HIGHLAND = 14;
 
 const tiles = [
     {
@@ -56,5 +57,8 @@ const tiles = [
     },{
         "name": "Coast",
         "colour": [143,200,255]
-	}
+	}, {
+        "name": "Highland",
+        "colour": [82, 147, 0]
+    }
 ];
