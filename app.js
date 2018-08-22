@@ -5,7 +5,7 @@
  * Large = 0.5
  * @type {number}
  */
-const ZOOM = 4;
+const ZOOM = 2;
 
 /**
  * Controls the number of tiles/pixels per chunk
@@ -21,7 +21,7 @@ const CHUNK_SIZE = 50;
  * Large = 128
  * @type {number}
  */
-const MAP_SIZE = 9;
+const MAP_SIZE = 18;
 
 const events = {
     windowEvents: [

@@ -63,6 +63,14 @@ function World(context) {
     // View Settings
     this.forceRenderView = false;
     this.overDraw = true;
+
+    // Generate travel maps
+    this.travelMap = [];
+    this.sailingMap = [];
+    for (let x = 0; x < (CHUNK_SIZE * MAP_SIZE) * 2; x++) {
+        this.travelMap[x] = [];
+        this.sailingMap[x] = [];
+    }
 }
 
 /**
@@ -343,16 +351,6 @@ World.prototype.renderChunkView = function(Cx, Cy) {
 };
 
 /**
- * Returns ID of the given tile chunk reference
- * @param chunkReference
- * @returns {number}
- */
-World.prototype.getTileId = function(chunkReference) {
-    const coord = this.getTilePosition(chunkReference);
-    return  (1 + ( coord[1] * CHUNK_SIZE + coord[0]));
-};
-
-/**
  * Returns global tile position coordinate from chunk reference
  * @param chunkReference
  * @returns {[*,*]}
@@ -361,154 +359,23 @@ World.prototype.getTilePosition = function(chunkReference) {
     return [chunkReference.Cx * CHUNK_SIZE + chunkReference.x, chunkReference.Cy * CHUNK_SIZE + chunkReference.y];
 };
 
+World.prototype.getTile = function(chunkReference) {
+    return tiles[this.getBiomeValue(chunkReference)];
+};
+
 /**
  * A Star implementation of a route between two tiles
  * @param CRStart
  * @param CREnd
  */
 World.prototype.routeTo = function(CRStart, CREnd) {
-
-    let counter = 0;
-
-    function euclideanDistance(Point, Goal) {
-        // diagonals are considered a little farther than cardinal directions
-        // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
-        // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
-        return Math.sqrt(Math.pow(Point[0] - Goal[0], 2) + Math.pow(Point[1] - Goal[1], 2));
-    }
-
-    function getNeighbours(self, node) {
-        const normalCost = 1;
-        const diagonalCost = 1.4;
-        const arr = [];
-        for (let x = node.co[0] - 1; x < node.co[0] + 2; x++) {
-            for (let y = node.co[1] - 1; y < node.co[1] + 2; y++) {
-
-                // If Valid
-                if (x >= 0 && y >= 0) {
-
-                    // And not self
-                    if (x !== node.co[0] || y !== node.co[1]) {
-
-                        // If traversable
-                        const neighbour = formatNode(self, self.getChunkReference(x, y));
-                        const biome = self.getBiomeValue(neighbour.cr);
-                        const tile = tiles[biome];
-
-                        if (tile.travel > 0) {
-                            // If Diagonal
-                            if (x !== node.co[0] && y !== node.co[1]) {
-                                neighbour.g = node.g + diagonalCost;
-                            } else {
-                                neighbour.g = node.g + normalCost;
-                            }
-
-                            // Save history
-                            neighbour.parent = node;
-                            arr.push(neighbour);
-                        }
-                    }
-                }
-            }
-        }
-        return arr;
-    }
-
-    function constructPath(node) {
-        const path = [ node ];
-        while (node.parent) {
-            node = node.parent;
-            path.push(node);
-        }
-        console.log("Path?", path);
-        return path
-    }
-
-    function formatNode(self, chunkReference) {
-        return {
-            cr: chunkReference,                             // Chunk Reference
-            co: self.getTilePosition(chunkReference),       // Global Co-ordinates [x, y]
-            id: self.getTileId(chunkReference),             // Tile ID
-            f: null,
-            g: null,
-            h: null
-        }
-    }
-
-    function nodeInList(list, node) {
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].id === node.id) return i;
-        } return -1;
-    }
-
-    const open = [];
-    const closed = [];
-
-    const start = formatNode(this, CRStart);
-    const end = formatNode(this, CREnd);
-
-    start.g = 0;
-    start.h = euclideanDistance(start.co, end.co);
-    start.f = start.g + start.h;
-    console.log("Start F Score:", start.f);
-
-    open.push(start);
-
-    while (open.length > 0) {
-        //console.log(open);
-        counter++;
-
-        if (counter > 10000) {
-            throw new Error("Infinite Loop: A* Path Finder");
-        } else {
-
-            // Find lowest F
-            let current = null, index;
-            for (let i = 0; i < open.length; i++) {
-                if (open.hasOwnProperty(i)) {
-                    if (current === null || current.f > open[i].f) {
-                        current = open[i];
-                        index = i;
-                    }
-                }
-            }
-
-            // We've arrived?
-            if (current.id === end.id) return constructPath(current);
-            //console.log("Current node:", current.co[0], current.co[1]);
-
-            // Remove current node from open list
-            open.splice(index, 1); // might not be removing from open list
-            //console.log(nodeInList(open, current) > -1 ? "WARNING: Current node not removed from open list!" : "Current node removed from open!", index);
-
-            // Add current to closed list
-            closed.push(current);
-            // Calculate neighbours
-            const neighbours = getNeighbours(this, current);
-            for (let i = 0; i < neighbours.length; i++) {
-
-                const neighbour = neighbours[i];
-
-                // Neighbour NOT in closed list
-                if (nodeInList(closed, neighbours[i]) === -1) {
-                    neighbour.h = euclideanDistance(neighbour.co, end.co);
-                    neighbour.f = neighbour.g + neighbour.h;
-
-                    // Neighbour NOT in open list
-                    if (nodeInList(open, neighbour) === -1) {
-                        open.push(neighbour);
-                    } else {
-                        const openNeighbour = neighbour;
-                        if (neighbour.g < openNeighbour.g) {
-                            openNeighbour.g = neighbour.g;
-                            openNeighbour.parent = neighbour.parent;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return false;
+    const start = this.getTilePosition(CRStart);
+    const end = this.getTilePosition(CREnd);
+    return astar.search(
+        this.travelGraph,
+        this.travelGraph.grid[start[0]][start[1]],
+        this.travelGraph.grid[end[0]][end[1]]
+    );
 };
 
 World.prototype.getTravelValue = function(chunkReference) {
@@ -519,4 +386,33 @@ World.prototype.getTravelValue = function(chunkReference) {
 
 World.prototype.getSailingValue = function(chunkReference) {
     return tiles[this.getBiomeValue(chunkReference)].sailing;
+};
+
+World.prototype.updateTravelMap = function(Cx, Cy) {
+    for (let x = 0; x < CHUNK_SIZE; x++) {
+        for (let y = 0; y < CHUNK_SIZE; y++) {
+            const chunkReference = {Cx, Cy, x, y};
+            const position = this.getTilePosition(chunkReference);
+            this.travelMap[position[0]][position[1]] = this.getTile(chunkReference).travel;
+        }
+    }
+};
+
+World.prototype.updateSailingMap = function(Cx, Cy) {
+    for (let x = 0; x < CHUNK_SIZE; x++) {
+        for (let y = 0; y < CHUNK_SIZE; y++) {
+            const chunkReference = {Cx, Cy, x, y};
+            const position = this.getTilePosition(chunkReference);
+            this.sailingMap[position[0]][position[1]] = this.getTile(chunkReference).sailing;
+        }
+    }
+};
+
+World.prototype.generateTravelGraph = function() {
+    console.log(this.travelMap);
+    this.travelGraph = new Graph(this.travelMap);
+};
+
+World.prototype.generateSailingGraph = function() {
+    this.sailingGraph = new Graph(this.sailingMap);
 };

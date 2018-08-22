@@ -7,7 +7,7 @@ function Game() {
     this.world = new World(canvas.getContext("2d"));
 
     // Game state
-    this.state = 0;
+    this.state = 1;
 
     this.mapPosition = {
         x: 0,
@@ -34,25 +34,73 @@ Game.prototype.update = function(elapsed) {
     this.fps = 1000 / elapsed;
 
     // Generate world 1 chunk per loop
-    if (x < MAP_SIZE * 2) {
-        this.world.status = "Generating: (" + x + ", " + y + ")";
-        this.world.generateChunk(x, y);
-        x++;
-    } else if (y < MAP_SIZE - 1) {
-        this.world.status = "Generating: (" + x + ", " + y + ")";
-        x = 0;
-        y++;
-        this.world.generateChunk(x, y);
-    } else {
-        this.world.status = "Idle";
+    const cstr = x + ", " + y;
+    if (this.state === 1) {
+        if (x < MAP_SIZE * 2) {
+            this.world.status = "Generating: Chunk " + cstr;
+            this.world.generateChunk(x, y);
+            x++;
+        } else if (y < MAP_SIZE - 1) {
+            this.world.status = "Generating: Chunk " + cstr;
+            x = 0;
+            y++;
+            this.world.generateChunk(x, y);
+        } else {
+            x = 0;
+            y = 0;
+            this.state = 2;
+        }
+    } else if (this.state === 2) {
+        if (x < MAP_SIZE * 2) {
+            this.world.status = "Generating TM: Chunk " + cstr;
+            this.world.updateTravelMap(x, y);
+            x++;
+        } else if (y < MAP_SIZE - 1) {
+            this.world.status = "Generating TM: Chunk " + cstr;
+            x = 0;
+            y++;
+            this.world.updateTravelMap(x, y);
+        } else {
+            x = 0;
+            y = 0;
+            this.state = 3;
+        }
+    } else if (this.state === 3) {
+        if (x < MAP_SIZE * 2) {
+            this.world.status = "Generating SM: Chunk " + cstr;
+            this.world.updateSailingMap(x, y);
+            x++;
+        } else if (y < MAP_SIZE - 1) {
+            this.world.status = "Generating SM: Chunk " + cstr;
+            x = 0;
+            y++;
+            this.world.updateSailingMap(x, y);
+        } else {
+            x = 0;
+            y = 0;
+            this.state = 4;
+        }
+    } else if (this.state === 4) {
+        this.world.status = "Generating travel graph";
+        this.world.generateTravelGraph();
+        this.state = 5;
+    } else if (this.state === 5) {
+        this.world.status = "Generating sailing graph";
+        this.world.generateSailingGraph();
+        this.state = 6;
+    } else if (this.state === 6) {
         if (!path) {
-            console.log("Start AStar");
-            path = game.world.routeTo(game.world.getChunkReference(420, 75), game.world.getChunkReference(720, 100));
-            console.log("AStar completed successfully!");
-            for (let i = 0; i < path.length; i++) {
-                console.log("X", path[i].co[0], "Y", path[i].co[1]);
+            this.world.status = "Generating Path...";
+            path = this.world.routeTo(this.world.getChunkReference(45, 715), this.world.getChunkReference(800, 500));
+        } else {
+            this.state = null;
+            console.log(path);
+            for (let i in path) {
+                console.log(path[i].x, path[i].y);
             }
         }
+    } else {
+        this.world.status = "Idle";
     }
 };
 
@@ -61,6 +109,7 @@ Game.prototype.draw = function() {
     // Reset context
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
+
     this.drawText("FPS: " + Math.round(this.fps), {x: 20, y: 30}, "#FFFFFF");
     this.world.renderWorldView(this.mapPosition, canvas.width, canvas.height);
 
@@ -118,9 +167,8 @@ Game.prototype.draw = function() {
         context.strokeStyle = "#000000";
         context.fillStyle = "#000000";
         context.lineWidth = 1;
-        context.moveTo(path[0].co[0], path[0].co[1]);
         for (let i = 0; i < path.length; i++) {
-            context.lineTo(path[i].co[0], path[i].co[1]);
+            context.lineTo(path[i].x, path[i].y);
             context.stroke();
         }
         context.closePath()
