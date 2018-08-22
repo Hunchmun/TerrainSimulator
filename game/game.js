@@ -27,6 +27,7 @@ function Game() {
     };
 }
 
+let path;
 Game.prototype.update = function(elapsed) {
 
     // Calculate FPS
@@ -44,6 +45,14 @@ Game.prototype.update = function(elapsed) {
         this.world.generateChunk(x, y);
     } else {
         this.world.status = "Idle";
+        if (!path) {
+            console.log("Start AStar");
+            path = game.world.routeTo(game.world.getChunkReference(420, 75), game.world.getChunkReference(720, 100));
+            console.log("AStar completed successfully!");
+            for (let i = 0; i < path.length; i++) {
+                console.log("X", path[i].co[0], "Y", path[i].co[1]);
+            }
+        }
     }
 };
 
@@ -102,6 +111,20 @@ Game.prototype.draw = function() {
     this.drawText("Chunks Drawn: " + this.world.chunksDrawn, {x: 20, y: 240}, "#FFFFFF");
 
     this.drawText("Status: " + this.world.status, {x: 20, y: 270}, "#FFFFFF");
+
+
+    if (path) {
+        context.beginPath();
+        context.strokeStyle = "#000000";
+        context.fillStyle = "#000000";
+        context.lineWidth = 1;
+        context.moveTo(path[0].co[0], path[0].co[1]);
+        for (let i = 0; i < path.length; i++) {
+            context.lineTo(path[i].co[0], path[i].co[1]);
+            context.stroke();
+        }
+        context.closePath()
+    }
 };
 
 Game.prototype.input = function(type, evt) {

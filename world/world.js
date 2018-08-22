@@ -381,8 +381,8 @@ World.prototype.routeTo = function(CRStart, CREnd) {
         const normalCost = 1;
         const diagonalCost = 1.4;
         const arr = [];
-        for (let x = node.co[0]; x < node.co[0] + 3; x++) {
-            for (let y = node.co[1]; y < node.co[1] + 3; y++) {
+        for (let x = node.co[0] - 1; x < node.co[0] + 2; x++) {
+            for (let y = node.co[1] - 1; y < node.co[1] + 2; y++) {
 
                 // If Valid
                 if (x >= 0 && y >= 0) {
@@ -410,7 +410,8 @@ World.prototype.routeTo = function(CRStart, CREnd) {
                     }
                 }
             }
-        } return arr;
+        }
+        return arr;
     }
 
     function constructPath(node) {
@@ -419,6 +420,7 @@ World.prototype.routeTo = function(CRStart, CREnd) {
             node = node.parent;
             path.push(node);
         }
+        console.log("Path?", path);
         return path
     }
 
@@ -456,47 +458,50 @@ World.prototype.routeTo = function(CRStart, CREnd) {
         //console.log(open);
         counter++;
 
-        if (counter > CHUNK_SIZE * MAP_SIZE) {
+        if (counter > 10000) {
             throw new Error("Infinite Loop: A* Path Finder");
         } else {
 
             // Find lowest F
-            let current = null, i;
-            for (i = 0; i < open.length; i++) {
+            let current = null, index;
+            for (let i = 0; i < open.length; i++) {
                 if (open.hasOwnProperty(i)) {
                     if (current === null || current.f > open[i].f) {
                         current = open[i];
+                        index = i;
                     }
                 }
             }
 
             // We've arrived?
             if (current.id === end.id) return constructPath(current);
-            console.log("Current node:", current.co[0], current.co[1]);
+            //console.log("Current node:", current.co[0], current.co[1]);
 
             // Remove current node from open list
-            open.splice(i-1, 1); // might not be removing from open list
+            open.splice(index, 1); // might not be removing from open list
+            //console.log(nodeInList(open, current) > -1 ? "WARNING: Current node not removed from open list!" : "Current node removed from open!", index);
 
             // Add current to closed list
             closed.push(current);
-            console.log(current);
             // Calculate neighbours
             const neighbours = getNeighbours(this, current);
-            for (i = 0; i < neighbours.length; i++) {
+            for (let i = 0; i < neighbours.length; i++) {
+
+                const neighbour = neighbours[i];
 
                 // Neighbour NOT in closed list
                 if (nodeInList(closed, neighbours[i]) === -1) {
-                    neighbours[i].h = euclideanDistance(neighbours[i].co, end.co);
-                    neighbours[i].f = neighbours[i].g + neighbours[i].h;
+                    neighbour.h = euclideanDistance(neighbour.co, end.co);
+                    neighbour.f = neighbour.g + neighbour.h;
 
                     // Neighbour NOT in open list
-                    if (nodeInList(open, neighbours[i]) === -1) {
-                        open.push(neighbours[i]);
+                    if (nodeInList(open, neighbour) === -1) {
+                        open.push(neighbour);
                     } else {
-                        const openNeighbor = neighbours[i];
-                        if (neighbours[i].g < openNeighbor.g) {
-                            openNeighbor.g = neighbours[i].g;
-                            openNeighbor.parent = neighbours[i].parent;
+                        const openNeighbour = neighbour;
+                        if (neighbour.g < openNeighbour.g) {
+                            openNeighbour.g = neighbour.g;
+                            openNeighbour.parent = neighbour.parent;
                         }
                     }
                 }
