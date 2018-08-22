@@ -112,6 +112,8 @@ Game.prototype.input = function(type, evt) {
         } break;
         case "mousedown": {
             this.mousePressed = true;
+            console.log('test');
+            console.log('Cords '+ this.mousePosition.x +',' + this.mousePosition.y);
         } break;
         case "mouseup": {
             this.mousePressed = false;

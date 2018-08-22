@@ -394,8 +394,8 @@ World.prototype.routeTo = function(CRStart, CREnd) {
                         const neighbour = formatNode(self, self.getChunkReference(x, y));
                         const biome = self.getBiomeValue(neighbour.cr);
                         const tile = tiles[biome];
-                        if (tile.travel > 0) {
 
+                        if (tile.travel > 0) {
                             // If Diagonal
                             if (x !== node.co[0] && y !== node.co[1]) {
                                 neighbour.g = node.g + diagonalCost;
@@ -446,13 +446,14 @@ World.prototype.routeTo = function(CRStart, CREnd) {
     const end = formatNode(this, CREnd);
 
     start.g = 0;
-    start.f = start.g + euclideanDistance(start.co, end.co);
+    start.h = euclideanDistance(start.co, end.co);
+    start.f = start.g + start.h;
     console.log("Start F Score:", start.f);
 
     open.push(start);
 
     while (open.length > 0) {
-
+        //console.log(open);
         counter++;
 
         if (counter > CHUNK_SIZE * MAP_SIZE) {
@@ -474,18 +475,19 @@ World.prototype.routeTo = function(CRStart, CREnd) {
             console.log("Current node:", current.co[0], current.co[1]);
 
             // Remove current node from open list
-            open.splice(i, 1);
+            open.splice(i-1, 1); // might not be removing from open list
 
             // Add current to closed list
             closed.push(current);
-
+            console.log(current);
             // Calculate neighbours
             const neighbours = getNeighbours(this, current);
             for (i = 0; i < neighbours.length; i++) {
 
                 // Neighbour NOT in closed list
                 if (nodeInList(closed, neighbours[i]) === -1) {
-                    neighbours[i].f = neighbours[i].g + euclideanDistance(neighbours[i].co, end.co);
+                    neighbours[i].h = euclideanDistance(neighbours[i].co, end.co);
+                    neighbours[i].f = neighbours[i].g + neighbours[i].h;
 
                     // Neighbour NOT in open list
                     if (nodeInList(open, neighbours[i]) === -1) {
