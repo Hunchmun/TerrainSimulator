@@ -151,14 +151,6 @@ layer10Slider.oninput = function () {
     game.world.maps[0].layers[9][0] = parseFloat(this.value / 1000);
 };
 
-const layer11Slider = document.getElementById("layer11");
-const layer11Output = document.getElementById("layer11Value");
-layer11Output.innerHTML = layer11Slider.value;
-layer11Slider.oninput = function () {
-    layer11Output.innerHTML = this.value;
-    game.world.maps[0].layers[10[0]] = parseFloat(this.value / 1000);
-};
-
 const waterLevelSlider = document.getElementById("waterLevel");
 const waterLevelOutput = document.getElementById("waterLevelValue");
 waterLevelOutput.innerHTML = waterLevelSlider.value;
