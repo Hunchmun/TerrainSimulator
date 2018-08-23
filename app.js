@@ -59,8 +59,8 @@ const scaleSlider = document.getElementById("scale");
 const scaleOutput = document.getElementById("scaleValue");
 scaleOutput.innerHTML = scaleSlider.value;
 scaleSlider.oninput = function () {
-    scaleOutput.innerHTML = (this.value / 10);
-    game.world.scale = (this.value / 10);
+    scaleOutput.innerHTML = this.value;
+    game.world.scale = this.value;
 };
 
 const noiseMultiSlider = document.getElementById("noiseMulti");
@@ -68,7 +68,95 @@ const noiseMultiOutput = document.getElementById("noiseMultiValue");
 noiseMultiOutput.innerHTML = noiseMultiSlider.value;
 noiseMultiSlider.oninput = function () {
     noiseMultiOutput.innerHTML = this.value;
-    game.world.noiseMultiplier = this.value;
+    game.world.noiseMultiplier = this.value * 10;
+};
+
+const layer1Slider = document.getElementById("layer1");
+const layer1Output = document.getElementById("layer1Value");
+layer1Output.innerHTML = layer1Slider.value;
+layer1Slider.oninput = function () {
+    layer1Output.innerHTML = this.value;
+    game.world.maps[0].layers[0][0] = parseFloat(this.value);
+};
+
+const layer2Slider = document.getElementById("layer2");
+const layer2Output = document.getElementById("layer2Value");
+layer2Output.innerHTML = layer2Slider.value;
+layer2Slider.oninput = function () {
+    layer2Output.innerHTML = this.value;
+    game.world.maps[0].layers[1][0] = parseFloat(this.value);
+};
+
+const layer3Slider = document.getElementById("layer3");
+const layer3Output = document.getElementById("layer3Value");
+layer3Output.innerHTML = layer3Slider.value;
+layer3Slider.oninput = function () {
+    layer3Output.innerHTML = this.value;
+    game.world.maps[0].layers[2][0] = parseFloat(this.value /10);
+};
+
+const layer4Slider = document.getElementById("layer4");
+const layer4Output = document.getElementById("layer4Value");
+layer4Output.innerHTML = layer4Slider.value;
+layer4Slider.oninput = function () {
+    layer4Output.innerHTML = this.value;
+    game.world.maps[0].layers[3][0] = parseFloat(this.value /10);
+};
+
+const layer5Slider = document.getElementById("layer5");
+const layer5Output = document.getElementById("layer5Value");
+layer5Output.innerHTML = layer5Slider.value;
+layer5Slider.oninput = function () {
+    layer5Output.innerHTML = this.value;
+    game.world.maps[0].layers[4][0] = parseFloat(this.value / 10);
+};
+
+const layer6Slider = document.getElementById("layer6");
+const layer6Output = document.getElementById("layer6Value");
+layer6Output.innerHTML = layer6Slider.value;
+layer6Slider.oninput = function () {
+    layer6Output.innerHTML = this.value;
+    game.world.maps[0].layers[5][0] = parseFloat(this.value / 10);
+};
+
+const layer7Slider = document.getElementById("layer7");
+const layer7Output = document.getElementById("layer7Value");
+layer7Output.innerHTML = layer7Slider.value;
+layer7Slider.oninput = function () {
+    layer7Output.innerHTML = this.value;
+    game.world.maps[0].layers[6][0] = parseFloat(this.value / 10);
+};
+
+const layer8Slider = document.getElementById("layer8");
+const layer8Output = document.getElementById("layer8Value");
+layer8Output.innerHTML = layer8Slider.value;
+layer8Slider.oninput = function () {
+    layer8Output.innerHTML = this.value;
+    game.world.maps[0].layers[7][0] = parseFloat(this.value / 1000);
+};
+
+const layer9Slider = document.getElementById("layer9");
+const layer9Output = document.getElementById("layer9Value");
+layer9Output.innerHTML = layer9Slider.value;
+layer9Slider.oninput = function () {
+    layer9Output.innerHTML = this.value;
+    game.world.maps[0].layers[8][0] = parseFloat(this.value / 1000);
+};
+
+const layer10Slider = document.getElementById("layer10");
+const layer10Output = document.getElementById("layer10Value");
+layer10Output.innerHTML = layer10Slider.value;
+layer10Slider.oninput = function () {
+    layer10Output.innerHTML = this.value;
+    game.world.maps[0].layers[9][0] = parseFloat(this.value / 1000);
+};
+
+const layer11Slider = document.getElementById("layer11");
+const layer11Output = document.getElementById("layer11Value");
+layer11Output.innerHTML = layer11Slider.value;
+layer11Slider.oninput = function () {
+    layer11Output.innerHTML = this.value;
+    game.world.maps[0].layers[10[0]] = parseFloat(this.value / 1000);
 };
 
 const waterLevelSlider = document.getElementById("waterLevel");
@@ -100,7 +188,7 @@ const tempMultiplierOutput = document.getElementById("tempMultiplierValue");
 tempMultiplierOutput.innerHTML = tempMultiplierSlider.value;
 tempMultiplierSlider.oninput = function () {
     tempMultiplierOutput.innerHTML = this.value;
-    game.world.temperatureMultiplier = parseInt(this.value);
+    game.world.temperatureMultiplier = parseInt(this.value * 10);
 };
 
 const tempElevationSlider = document.getElementById("tempElevation");
