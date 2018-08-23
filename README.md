@@ -3,6 +3,8 @@
 Small world generation sandbox derived from the work by [Amit Patel (Red Blob Games)](https://www.redblobgames.com/maps/terrain-from-noise/).
 Thank you for making your work available so that others can learn.
 
+Check out a demo [here!](http://hench.space/projects/TerrainSimulator/index.html)
+
 ### Description
 
 This is a simple world generator sandbox built in Javascript using [Simplex noise](https://www.npmjs.com/package/simplex-noise).
