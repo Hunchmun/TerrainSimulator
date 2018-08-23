@@ -12,13 +12,14 @@ function World(context) {
     this.chunksDrawn = 0;
 
     // Maps
+    this.seed = "henchman";
     this.elevation = [];
     this.chunks = [];
     this.maps = [
         {
             name: "elevation",
             seed: "height",
-            signal: new SimplexNoise(/*"height"*/),
+            signal: new SimplexNoise(this.seed),
             layers: [
                 [12, 0.0625, 0.0625],
                 [10, 0.125, 0.125],
@@ -47,6 +48,7 @@ function World(context) {
     this.temperaturHeightLossTemperature = 2; //Amount of temperature lost per elevation unit
 
     // Terrain Settings
+    this.scale = 4;
     this.waterLevel = 0;
     this.snowLevel = 1000;
     this.noiseMultiplier = 400;
@@ -86,7 +88,7 @@ World.prototype.getChunkReference = function(x, y) {
  * @returns {number}
  */
 World.prototype.getTemperature = function(chunkReference) {
-    const elevation = this.getElevation(chunkReference);
+    const elevation = this.getElevation(chunkReference) - this.waterLevel;
     const latitude = this.getLatitude(chunkReference);
     return Math.floor(((latitude / (MAP_SIZE * CHUNK_SIZE)) * - this.temperatureMultiplier) - (((elevation < 0 ? 0 : elevation)
         / this.temperaturHeightLossDistance) * this.temperaturHeightLossTemperature) + this.baseTemperature);
@@ -108,7 +110,7 @@ World.prototype.getBiomeValue = function(chunkReference) {
     }
 
     // Beach
-    if (e < 50) {
+    if (e < this.waterLevel + 50) {
         if (t < -10) return SNOW;
         if (m > 200) return ROCKY;
         return BEACH;
@@ -117,7 +119,7 @@ World.prototype.getBiomeValue = function(chunkReference) {
     if (t < 0) return SNOW;
 
     // Low Elevation Ground
-    if (e < 750) {
+    if (e < this.waterLevel + 750) {
 
         // Low Temperature
         if (t < 5) {
@@ -135,7 +137,7 @@ World.prototype.getBiomeValue = function(chunkReference) {
     }
 
     // Moderate Elevation
-    if (e < 1500) {
+    if (e < this.waterLevel + 1500) {
 
         // Low Temperature
         if (t < 5) {
@@ -253,13 +255,13 @@ World.prototype.generateNoiseMap = function(signal, layers, xOffset, yOffset) {
     for (let x = 0; x < CHUNK_SIZE; x++) {
         map[x] = [];
         for (let y = 0; y < CHUNK_SIZE; y++) {
-            const uX = x * ZOOM;
-            const uY = y * ZOOM;
+            const uX = x * this.scale;
+            const uY = y * this.scale;
             let e = 0;
             for (let i = 0; i < layers.length; i++) {
 
                 // Noise output function
-                e += layers[i][0] * (signal.noise2D(layers[i][1] * (uX / CHUNK_SIZE - xOffset * ZOOM), layers[i][2] * (uY / CHUNK_SIZE - yOffset * ZOOM)));
+                e += layers[i][0] * (signal.noise2D(layers[i][1] * (uX / CHUNK_SIZE - xOffset * this.scale), layers[i][2] * (uY / CHUNK_SIZE - yOffset * this.scale)));
             }
             map[x][y] = Math.round(((e + 0.5) / 4) * p);
         }
@@ -325,49 +327,17 @@ World.prototype.renderChunkView = function(Cx, Cy) {
     const data = image.data;
     for (let x = 0; x < CHUNK_SIZE; x++) {
         for (let y = 0; y < CHUNK_SIZE; y++) {
-
             const cell = (x + y * CHUNK_SIZE) * 4;
             const chunkReference = {Cx, Cy, x, y};
             const tile = tiles[this.getBiomeValue(chunkReference)];
-
             data[cell] = tile.colour[0];
             data[cell + 1] = tile.colour[1];
             data[cell + 2] = tile.colour[2];
-
-            //data[cell] += Math.max(0, (25 - value) * 8);
-            data[cell + 3] = 255; // alpha.
+            data[cell + 3] = 255;
         }
     }
 
     return image;
-};
-
-/**
- * Returns ID of the given tile chunk reference
- * @param chunkReference
- * @returns {number}
- */
-World.prototype.getTileId = function(chunkReference) {
-    const coord = this.getGlobalPosition(chunkReference);
-    return  (1 + ( coord[1] * CHUNK_SIZE + coord[0]));
-};
-
-/**
- * Returns global tile position coordinate from chunk reference
- * @param chunkReference
- * @returns {[*,*]}
- */
-World.prototype.getTilePosition = function(chunkReference) {
-    return [chunkReference.Cx * CHUNK_SIZE + chunkReference.x, chunkReference.Cy * CHUNK_SIZE + chunkReference.y];
-};
-
-/**
- * A Star implementation of a route between two tiles
- * @param CRStart
- * @param CREnd
- */
-World.prototype.routeTo = function(CRStart, CREnd) {
-
 };
 
 World.prototype.getTravelValue = function(chunkReference) {

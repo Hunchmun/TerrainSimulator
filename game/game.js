@@ -193,3 +193,8 @@ Game.prototype.mouseDrag = function() {
     }
     this.lastMouseClickPosition = this.mousePosition;
 };
+
+Game.prototype.regenerateWorld = function() {
+    x = 0;
+    y = 0;
+};

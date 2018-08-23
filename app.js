@@ -1,13 +1,4 @@
 /**
- * Controls the amplitude of generation. Smaller is to zoom in
- * Small = 4
- * Medium = 2
- * Large = 0.5
- * @type {number}
- */
-const ZOOM = 4;
-
-/**
  * Controls the number of tiles/pixels per chunk
  * Optimal = 100
  * @type {number}
