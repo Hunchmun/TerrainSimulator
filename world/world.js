@@ -50,9 +50,8 @@ function World(context) {
     // Terrain Settings
     this.scale = 4;
     this.waterLevel = 0;
-    this.snowLevel = 1000;
     this.noiseMultiplier = 400;
-    this.iceMultiplier = 4; //(Lower is more)
+    this.iceSpread= 4;
 
     // Populate map
     for (let x = 0; x < MAP_SIZE * 2; x++) {
@@ -104,13 +103,13 @@ World.prototype.getBiomeValue = function(chunkReference) {
 
     // Ocean
     if (e < this.waterLevel) {
-        if (m + (t * this.iceMultiplier) < 0) return ICE;
+        if (m + (t * this.iceSpread) < 0) return ICE;
         else if (e < this.waterLevel - 150) return OCEAN;
         else return COAST;
     }
 
     // Beach
-    if (e < this.waterLevel + 50) {
+    if (e <  50) { //TODO: Adjust elevation for water level
         if (t < -10) return SNOW;
         if (m > 200) return ROCKY;
         return BEACH;
@@ -119,7 +118,7 @@ World.prototype.getBiomeValue = function(chunkReference) {
     if (t < 0) return SNOW;
 
     // Low Elevation Ground
-    if (e < this.waterLevel + 750) {
+    if (e < 750) {
 
         // Low Temperature
         if (t < 5) {
@@ -137,7 +136,7 @@ World.prototype.getBiomeValue = function(chunkReference) {
     }
 
     // Moderate Elevation
-    if (e < this.waterLevel + 1500) {
+    if (e < 1500) {
 
         // Low Temperature
         if (t < 5) {
@@ -154,7 +153,6 @@ World.prototype.getBiomeValue = function(chunkReference) {
     }
 
     // High Elevation
-    if (e > this.snowLevel && t < 0) return SNOW;
     return ROCKY;
 };
 
@@ -214,9 +212,7 @@ World.prototype.generateNoiseLayersFibonacci = function() {
 World.prototype.generateChunk = function(Cx, Cy) {
 
     // Update chunk count
-    if (this.chunks[x][y] === null) {
-        this.renderedChunks++;
-    }
+    this.renderedChunks++;
 
     // Generate Maps
     const xOffset = -Cx; //Determine offset by x/y position
@@ -338,14 +334,4 @@ World.prototype.renderChunkView = function(Cx, Cy) {
     }
 
     return image;
-};
-
-World.prototype.getTravelValue = function(chunkReference) {
-    const populatedRoads = this.chunks[chunkReference.Cx][chunkReference.Cy].maps["roads"];
-    return tiles[this.getBiomeValue(chunkReference)].travel
-        + (populatedRoads !== null ? this.chunks[chunkReference.Cx][chunkReference.Cy].maps["roads"][chunkReference.x][chunkReference.y] : 0);
-};
-
-World.prototype.getSailingValue = function(chunkReference) {
-    return tiles[this.getBiomeValue(chunkReference)].sailing;
 };

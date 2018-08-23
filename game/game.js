@@ -1,13 +1,7 @@
 function Game() {
 
-    // Game loop variables
-    this.fps = 0;
-
     // Setup world
     this.world = new World(canvas.getContext("2d"));
-
-    // Game state
-    this.state = 0;
 
     this.mapPosition = {
         x: 0,
@@ -29,19 +23,14 @@ function Game() {
 
 Game.prototype.update = function(elapsed) {
 
-    // Calculate FPS
-    this.fps = 1000 / elapsed;
-
     // Generate world 1 chunk per loop
     if (x < MAP_SIZE * 2) {
         this.world.status = "Generating: (" + x + ", " + y + ")";
         this.world.generateChunk(x, y);
         x++;
     } else if (y < MAP_SIZE - 1) {
-        this.world.status = "Generating: (" + x + ", " + y + ")";
         x = 0;
         y++;
-        this.world.generateChunk(x, y);
     } else {
         this.world.status = "Idle";
     }
@@ -52,56 +41,37 @@ Game.prototype.draw = function() {
     // Reset context
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
-    this.drawText("FPS: " + Math.round(this.fps), {x: 20, y: 30}, "#FFFFFF");
     this.world.renderWorldView(this.mapPosition, canvas.width, canvas.height);
 
-    context.clearRect(10, 10, 175, 300);
-    this.drawGrid(CHUNK_SIZE, CHUNK_SIZE / 2);
-
-    this.drawText("Mouse X: " + Math.floor(this.mousePosition.x), {x: 20, y: 40}, "#FFFFFF");
-    this.drawText("Mouse Y: " + Math.floor(this.mousePosition.y), {x: 20, y: 50}, "#FFFFFF");
+    context.clearRect(10, 5, 150, 120);
 
     // Elevation Inspector
     const chunkReference = this.world.getChunkReference((Math.floor(this.mousePosition.x) + this.mapPosition.x), (Math.floor(this.mousePosition.y) + this.mapPosition.y));
 
+    this.drawText("Status: " + this.world.status, {x: 20, y: 20}, "#FFFFFF");
+
     try {
-        this.drawText("Chunk X: " + chunkReference.Cx, {x: 20, y: 70}, "#FFFFFF");
-        this.drawText("Chunk Y: " + chunkReference.Cy, {x: 20, y: 80}, "#FFFFFF");
-        this.drawText("Tile X: " + chunkReference.x, {x: 20, y: 90}, "#FFFFFF");
-        this.drawText("Tile Y: " + chunkReference.y, {x: 20, y: 100}, "#FFFFFF");
 
         const elevation = this.world.getElevation(chunkReference);
-        this.drawText("Elevation: " + elevation, {x: 20, y: 150}, "#FFFFFF");
+        this.drawText("Elevation: " + elevation, {x: 20, y: 40}, "#FFFFFF");
 
         const moisture = this.world.getMoisture(chunkReference);
-        this.drawText("Moisture: " + moisture, {x: 20, y: 160}, "#FFFFFF");
+        this.drawText("Moisture: " + moisture, {x: 20, y: 50}, "#FFFFFF");
 
         const latitude = this.world.getLatitude(chunkReference);
-        this.drawText("Latitude: " + latitude, {x: 20, y: 170}, "#FFFFFF");
+        this.drawText("Latitude: " + latitude, {x: 20, y: 60}, "#FFFFFF");
 
         const temperature = this.world.getTemperature(chunkReference);
-        this.drawText("Temperature: " + temperature, {x: 20, y: 180}, "#FFFFFF");
+        this.drawText("Temperature: " + temperature, {x: 20, y: 70}, "#FFFFFF");
 
         const biome = this.world.getBiomeValue(chunkReference);
-        this.drawText("Biome: " + biome + " (" + tiles[biome].name + ")", {x: 20, y: 190}, "#FFFFFF");
-
-        const travelValue = this.world.getTravelValue(chunkReference);
-        this.drawText("Travel Value: " + travelValue, {x: 20, y: 200}, "#FFFFFF");
-
-        const sailingValue = this.world.getSailingValue(chunkReference);
-        this.drawText("Sailing Value: " + sailingValue, {x: 20, y: 210}, "#FFFFFF");
-
+        this.drawText("Biome: " + biome + " (" + tiles[biome].name + ")", {x: 20, y: 80}, "#FFFFFF");
     } catch (e) {
         console.error(e);
     }
 
-    this.drawText("Map Offset X: " + this.mapPosition.x, {x: 20, y: 120}, "#FFFFFF");
-    this.drawText("Map Offset Y: " + this.mapPosition.y, {x: 20, y: 130}, "#FFFFFF");
-
-    this.drawText("Chunks Rendered: " + (this.world.renderedChunks + "/" + this.world.totalChunks), {x: 20, y: 230}, "#FFFFFF");
-    this.drawText("Chunks Drawn: " + this.world.chunksDrawn, {x: 20, y: 240}, "#FFFFFF");
-
-    this.drawText("Status: " + this.world.status, {x: 20, y: 270}, "#FFFFFF");
+    this.drawText("Chunks Rendered: " + (this.world.renderedChunks + "/" + this.world.totalChunks), {x: 20, y: 100}, "#FFFFFF");
+    this.drawText("Chunks Drawn: " + this.world.chunksDrawn, {x: 20, y: 110}, "#FFFFFF");
 };
 
 Game.prototype.input = function(type, evt) {
@@ -152,40 +122,6 @@ Game.prototype.drawText = function(str, position, colour) {
     context.closePath();
 };
 
-Game.prototype.drawGrid = function(major, minor) {
-    const context = canvas.getContext("2d");
-    minor = minor || 10;
-    major = major || minor * 5;
-
-    context.lineWidth = 0.25;
-    context.strokeStyle = "#00FF00";
-    context.fillStyle = "#009900";
-    context.stroke();
-
-    for (let x = 0; x < canvas.width; x += minor) {
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x, canvas.height);
-        context.lineWidth = (x % major == 0) ? 0.5 : 0.25;
-        if (x % 50 == 0) {
-            context.fillText(x, x, 10);
-        }
-        context.stroke();
-    }
-
-    for (let y = 0; y < canvas.height; y += minor) {
-        context.beginPath();
-        context.moveTo(0, y);
-        context.lineTo(canvas.width, y);
-        context.lineWidth = (y % major == 0) ? 0.5 : 0.25;
-        if (y % 50 == 0) {
-            context.fillText(y, 0, y + 10);
-        }
-        context.stroke();
-    }
-    context.closePath();
-};
-
 Game.prototype.mouseDrag = function() {
     if (this.mousePressed) {
         this.mapPosition.x -= (this.mousePosition.x - this.lastMouseClickPosition.x);
@@ -197,4 +133,6 @@ Game.prototype.mouseDrag = function() {
 Game.prototype.regenerateWorld = function() {
     x = 0;
     y = 0;
+    this.world.chunksDrawn = 0;
+    this.world.renderedChunks = 0;
 };
