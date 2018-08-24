@@ -1,0 +1,19 @@
+<script src="http://localhost:3001/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:3001');
+    socket.on('chunk_update', function (data) {
+        console.log(data);
+    });
+
+    socket.on("error", function(data) {
+        console.log("Socket Error:", data);
+    });
+
+    socket.on("connect", function(data) {
+        console.log("Socket Connected!");
+    });
+
+    socket.on("disconnect", function(data) {
+        console.log("Socket Disconnected:", data);
+    });
+</script>

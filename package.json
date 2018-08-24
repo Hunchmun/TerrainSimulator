@@ -1,0 +1,29 @@
+{
+  "name": "terrainsimulator",
+  "version": "0.0.0",
+  "description": "World simulator and terrain generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hunchmun/TerrainSimulator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hunchmun/TerrainSimulator/issues"
+  },
+  "homepage": "https://github.com/Hunchmun/TerrainSimulator#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "jethro": "^4.4.0",
+    "mqtt": "^2.18.5",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.1.1"
+  }
+}
