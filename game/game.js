@@ -19,6 +19,8 @@ function Game() {
         x: 0,
         y: 0
     };
+
+    this.zoom = 1;
 }
 
 Game.prototype.update = function(elapsed) {
@@ -41,12 +43,14 @@ Game.prototype.draw = function() {
     // Reset context
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
-    this.world.renderWorldView(this.mapPosition, canvas.width, canvas.height);
+    context.scale(1 * this.zoom, 1 * this.zoom);
+    this.world.renderWorldView(this.mapPosition, canvas.width, canvas.height, this.zoom);
+    context.scale(1 / this.zoom, 1 / this.zoom);
 
     context.clearRect(10, 5, 150, 120);
 
     // Elevation Inspector
-    const chunkReference = this.world.getChunkReference((Math.floor(this.mousePosition.x) + this.mapPosition.x), (Math.floor(this.mousePosition.y) + this.mapPosition.y));
+    const chunkReference = this.world.getChunkReference((Math.floor(this.mousePosition.x * this.zoom) + this.mapPosition.x), (Math.floor(this.mousePosition.y * this.zoom) + this.mapPosition.y));
 
     this.drawText("Status: " + this.world.status, {x: 20, y: 20}, "#FFFFFF");
 
@@ -72,6 +76,7 @@ Game.prototype.draw = function() {
 
     this.drawText("Chunks Rendered: " + (this.world.renderedChunks + "/" + this.world.totalChunks), {x: 20, y: 100}, "#FFFFFF");
     this.drawText("Chunks Drawn: " + this.world.chunksDrawn, {x: 20, y: 110}, "#FFFFFF");
+    this.drawText("Zoom: " + this.zoom, {x: 20, y: 120}, "#FFFFFF");
 };
 
 Game.prototype.input = function(type, evt) {
@@ -98,6 +103,13 @@ Game.prototype.input = function(type, evt) {
                 case 39: this.mapPosition.x += 50; break; //Right key
                 case 40: this.mapPosition.y += 50; break; //Down key
                 case 82: this.mapPosition.y = 0; this.mapPosition.x = 0; break; //Reset Map Position
+                    // zoom
+                case 187: { // IN
+                    this.zoom = (this.zoom >= 5 ? 5 : this.zoom + 0.1);
+                } break;
+                case 189: { // OUT
+                    this.zoom = (this.zoom <= 0.1 ? 0.1 : this.zoom - 0.1);
+                } break;
                 default: console.log("Keypress Event:", code); //Everything else
             }
         } break;

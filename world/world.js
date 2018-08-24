@@ -233,7 +233,7 @@ World.prototype.generateChunk = function(Cx, Cy) {
     }
 
     // Generate image
-    this.chunks[Cx][Cy].image = this.renderChunkView(Cx, Cy);
+    this.chunks[Cx][Cy].imageData = this.renderChunkView(Cx, Cy);
 };
 
 /**
@@ -302,7 +302,7 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
 
         if (this.chunks[x][y] !== null) {
             this.chunksDrawn++;
-            this.context.putImageData(
+            this.context.drawImage(
                 this.chunks[x][y].image,
                 x * CHUNK_SIZE - screenPosition.x,
                 y * CHUNK_SIZE - screenPosition.y
@@ -318,6 +318,8 @@ World.prototype.renderWorldView = function(screenPosition, width, height) {
  * @returns {ImageData}
  */
 World.prototype.renderChunkView = function(Cx, Cy) {
+    const canvas = document.getElementById("chunk");
+    const context = canvas.getContext("2d");
     const image = this.context.createImageData(CHUNK_SIZE, CHUNK_SIZE);
     const data = image.data;
     for (let x = 0; x < CHUNK_SIZE; x++) {
@@ -332,5 +334,8 @@ World.prototype.renderChunkView = function(Cx, Cy) {
         }
     }
 
+    context.putImageData(image, 0, 0);
+    this.chunks[x][y].image = new Image();
+    this.chunks[x][y].image.src = canvas.toDataURL();
     return image;
 };
