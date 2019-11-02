@@ -12,7 +12,8 @@ function World(context) {
     this.chunksDrawn = 0;
 
     // Maps
-    this.seed = "henchman";
+    this.seed = Math.random();
+    console.log("World seed:", this.seed);
     this.elevation = [];
     this.chunks = [];
     this.maps = [

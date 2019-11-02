@@ -45,12 +45,14 @@ function loop(timestamp) {
 
 // Register canvas events
 for (let i in events.canvasEvents) {
-    const event = events.canvasEvents;
-    if (event[i].hasOwnProperty(i)) {
-        console.log("Registered", event[i]);
-        canvas.addEventListener(event[i], function (evt) {
-            game.input(event[i], evt);
-        }, false);
+    if (events.canvasEvents.hasOwnProperty(i)) {
+        const event = events.canvasEvents;
+        if (event[i].hasOwnProperty(i)) {
+            console.log("Registered", event[i]);
+            canvas.addEventListener(event[i], function (evt) {
+                game.input(event[i], evt);
+            }, false);
+        }
     }
 }
 
